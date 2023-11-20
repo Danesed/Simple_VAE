@@ -1,0 +1,22 @@
+network:
+  image_size: 512
+  num_workers: 4
+  channels_img: 3  #1 for mnist, 3 for rgb
+  z_dim: 256 #512 in the original paper. smaller values for less computational overload
+  in_channels: 256 #512 in the original paper. smaller values for less computational overload
+
+
+dataset:
+  dataset: "/media/danilo/hdd_0/Generative_Projects/DATASETs/CelebHQ/archive/celeba_hq"
+
+training:
+    lr: 1e-3 #2e-4 #1e-5
+    num_epochs: 10
+    batch_sizes: [16, 16, 16, 16, 16, 16, 16, 8, 4] #[32, 32, 32, 16, 16, 16, 16, 8, 4] depends on vram
+    lambda_gp: 10
+    critic_iterations: 1
+    optimizer: Adam #RMSprop #Adam
+    betas: [ 0.0, 0.99 ]
+    start_train_at_img_size: 4 #128
+    progressive_epochs: 10 #30 # depends on the size of the dataset and the size of the batches
+    alpha: 1e-5
