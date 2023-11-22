@@ -26,42 +26,8 @@ H_DIM = hyp_config["network"].get("h_dim")
 NUM_EPOCHS = hyp_config["training"].get("num_epochs")
 LR_RATE = hyp_config["training"].get("lr")
 
-
-
-START_TRAIN_AT_IMG_SIZE = hyp_config["training"].get("start_train_at_img_size")
 BATCH_SIZES = hyp_config["training"].get("batch_sizes")
-
-ALPHA =  float(hyp_config["training"].get("alpha"))
-CHANNELS_IMG = hyp_config["network"].get("channels_img")
-IN_CHANNELS = hyp_config["network"].get("in_channels")
-CRITIC_ITERATIONS = hyp_config["network"].get("critic_iterations")
-LAMBDA_GP = hyp_config["training"].get("lambda_gp")
-FIXED_NOISE = torch.randn(8, Z_DIM, 1, 1).to(DEVICE)
 NUM_WORKERS = hyp_config["network"].get("num_workers")
 
 CHECKPOINT_CRITIC = "critic.pth"
 CHECKPOINT_GEN = "gen.pth"
-
-
-# def get_loader(image_size):
-#     transform = transforms.Compose(
-#         [
-#             transforms.Resize((image_size, image_size)),
-#             transforms.ToTensor(),
-#             transforms.RandomHorizontalFlip(p=0.5),
-#             transforms.Normalize(
-#                 [0.5 for _ in range(CHANNELS_IMG)],
-#                 [0.5 for _ in range(CHANNELS_IMG)],
-#             ),
-#         ]
-#     )
-#     batch_size = BATCH_SIZES[int(log2(image_size / 4))]
-#     dataset = datasets.ImageFolder(root=DATASET, transform=transform)
-#     loader = DataLoader(
-#         dataset,
-#         batch_size=batch_size,
-#         shuffle=True,
-#         num_workers=NUM_WORKERS,
-#         pin_memory=True,
-#     )
-#     return loader, dataset

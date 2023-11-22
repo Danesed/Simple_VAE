@@ -11,17 +11,11 @@ from torchvision.utils import save_image
 from config.config import dataset, BATCH_SIZES, INPUT_DIM, H_DIM, Z_DIM, DEVICE, hyp_config, NUM_EPOCHS
 from utils.utils import optimizer_factory
 
-# Dataset Loading
-train_loader = DataLoader(dataset=dataset, batch_size=BATCH_SIZES, shuffle=True)
-model = VariationalAutoEncoder(INPUT_DIM, H_DIM, Z_DIM).to(DEVICE)
-optimizer = optimizer_factory(hyp_config, model.parameters())
 
-# Reconstruction Loss
-loss_fn = nn.BCELoss(reduction="sum")  # y_i * (log( )) where the y are the actual pixel values
 
 # TO be refactored with def train_fn
+def train_fn(model, train_loader, optimizer, loss_fn, DEVICE):
 
-for epoch in range(NUM_EPOCHS):
     loop = tqdm(enumerate(train_loader))
     for i, (x, _) in loop:
         # Forward
@@ -41,10 +35,8 @@ for epoch in range(NUM_EPOCHS):
 
 
 
-# Inference
 
-model = model.to("cpu")
-def inference(digit, num_examples=1):
+def inference(model, digit, num_examples=1):
     """
     Generate examples of a particular digit.
     Extract an example of each digit, then having mu and sigma representation for
@@ -78,7 +70,32 @@ def inference(digit, num_examples=1):
         z = mu + sigma * epsilon
         out = model.decode(z)
         out = out.view(-1, 1, 28, 28)
-        save_image(out, f"generated_{digit}_ex{example}.png")
+        save_image(out, f"output/generated_{digit}_ex{example}.png")
 
-for idx in range(10):
-    inference(idx, num_examples=1)
+
+
+
+def main():
+
+    # Model Setup
+    model = VariationalAutoEncoder(INPUT_DIM, H_DIM, Z_DIM).to(DEVICE)
+    optimizer = optimizer_factory(hyp_config, model.parameters())
+
+    # Reconstruction Loss
+    loss_fn = nn.BCELoss(reduction="sum")  # y_i * (log( )) where the y are the actual pixel values
+
+    # Dataset Loading
+    train_loader = DataLoader(dataset=dataset, batch_size=BATCH_SIZES, shuffle=True)
+
+    # Training
+    for epoch in range(NUM_EPOCHS):
+        train_fn(model=model, train_loader=train_loader, optimizer=optimizer, loss_fn=loss_fn, DEVICE=DEVICE)
+
+    # Inference
+    model = model.to("cpu")
+    for idx in range(10):
+        inference(model, idx, num_examples=1)
+
+
+if __name__ == "__main__": #num workers and windows have problems if not launched with main
+    main()

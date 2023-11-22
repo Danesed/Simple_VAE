@@ -13,6 +13,6 @@ dataset:
 training:
     lr: 3e-4  # Karpathy constant
     num_epochs: 10
-    batch_sizes: 32
+    batch_sizes: 8
     optimizer: Adam #RMSprop #Adam
-    #betas: [ 0.0, 0.99 ]
+    betas: [ 0.9, 0.99 ] # default adam betas
