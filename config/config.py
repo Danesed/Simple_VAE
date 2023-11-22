@@ -29,5 +29,6 @@ LR_RATE = hyp_config["training"].get("lr")
 BATCH_SIZES = hyp_config["training"].get("batch_sizes")
 NUM_WORKERS = hyp_config["network"].get("num_workers")
 
-CHECKPOINT_CRITIC = "critic.pth"
-CHECKPOINT_GEN = "gen.pth"
+PROJECT = hyp_config["logger"].get("project", "Simple_VAE")
+
+

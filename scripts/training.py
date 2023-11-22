@@ -1,3 +1,4 @@
+import os
 import torch
 import torchvision.datasets as datasets
 from torch.utils.data import DataLoader
@@ -8,13 +9,32 @@ import config.config
 from models.networks.model import VariationalAutoEncoder
 from torchvision import transforms
 from torchvision.utils import save_image
-from config.config import dataset, BATCH_SIZES, INPUT_DIM, H_DIM, Z_DIM, DEVICE, hyp_config, NUM_EPOCHS
+from config.config import * # dataset, BATCH_SIZES, INPUT_DIM, H_DIM, Z_DIM, DEVICE, hyp_config, NUM_EPOCHS, STATS_LOGGER, PROJECT
 from utils.utils import optimizer_factory
+from utils.stats_logger import StatsLogger, WandB
 
+from datetime import datetime
+now = datetime.now()
+current_time = now.strftime("_%H_%M_%S")
 
+def train_fn(model, train_loader, optimizer, loss_fn, PROJECT, DEVICE):
 
-# TO be refactored with def train_fn
-def train_fn(model, train_loader, optimizer, loss_fn, DEVICE):
+    # Initialize the logger
+    if hyp_config["logger"].get("type") == "wandb":
+        WandB.instance().init(
+            config,
+            model=model,
+            project=PROJECT,
+            name=f"Simple_VAE{current_time}",
+            watch=False,
+            log_frequency=10
+        )
+
+    # Log the stats to a file
+    StatsLogger.instance().add_output_file(open(
+        os.path.join("experiments", "stats.txt"),
+        "w"
+    ))
 
     loop = tqdm(enumerate(train_loader))
     for i, (x, _) in loop:
@@ -32,6 +52,8 @@ def train_fn(model, train_loader, optimizer, loss_fn, DEVICE):
         loss.backward()
         optimizer.step()
         loop.set_postfix(loss=loss.item())
+        StatsLogger.instance().print_progress(epoch=i + 1, loss=loss, batch="", show=False)
+        StatsLogger.instance().clear()
 
 
 
@@ -89,7 +111,7 @@ def main():
 
     # Training
     for epoch in range(NUM_EPOCHS):
-        train_fn(model=model, train_loader=train_loader, optimizer=optimizer, loss_fn=loss_fn, DEVICE=DEVICE)
+        train_fn(model=model, train_loader=train_loader, optimizer=optimizer, loss_fn=loss_fn, DEVICE=DEVICE, PROJECT=PROJECT)
 
     # Inference
     model = model.to("cpu")
