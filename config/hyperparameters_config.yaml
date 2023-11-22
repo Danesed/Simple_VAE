@@ -1,16 +1,18 @@
 network:
-  image_size: 512
+  input_dim: 784
   num_workers: 4
   channels_img: 3  #1 for mnist, 3 for rgb
-  z_dim: 256 #512 in the original paper. smaller values for less computational overload
+  z_dim: 20 # Compression level
+  h_dim: 200 # Computational overhead
   in_channels: 256 #512 in the original paper. smaller values for less computational overload
 
 
 dataset:
-  dataset: "/media/danilo/hdd_0/Generative_Projects/DATASETs/CelebHQ/archive/celeba_hq"
+  #dataset: "/media/danilo/hdd_0/Generative_Projects/DATASETs/CelebHQ/archive/celeba_hq"
+  dataset: "MNIST"
 
 training:
-    lr: 1e-3 #2e-4 #1e-5
+    lr: 3e-4 #2e-4 #1e-5 # Karpathy constant
     num_epochs: 10
     batch_sizes: [16, 16, 16, 16, 16, 16, 16, 8, 4] #[32, 32, 32, 16, 16, 16, 16, 8, 4] depends on vram
     lambda_gp: 10
