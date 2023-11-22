@@ -39,3 +39,46 @@ for epoch in range(NUM_EPOCHS):
         optimizer.step()
         loop.set_postfix(loss=loss.item())
 
+
+
+# Inference
+
+model = model.to("cpu")
+def inference(digit, num_examples=1):
+    """
+    Generate examples of a particular digit.
+    Extract an example of each digit, then having mu and sigma representation for
+    each digit, it is possible to sample from that.
+
+     After sampling, we can run the decoder part of the vae and generate examples.
+    :param digit:
+    :param num_examples:
+    :return:
+    """
+
+    images = []
+    idx = 0
+    for x, y in dataset:
+        if y == idx:
+            images.append(x)
+            idx += 1
+        if idx == 10:
+            break
+
+
+    encodings_digit = []
+    for d in range(10):
+        with torch.no_grad():
+            mu, sigma = model.encode(images[d].view(1, 784))
+        encodings_digit.append((mu, sigma))
+
+    mu, sigma = encodings_digit[digit]
+    for example in range(num_examples):
+        epsilon = torch.randn_like(sigma)
+        z = mu + sigma * epsilon
+        out = model.decode(z)
+        out = out.view(-1, 1, 28, 28)
+        save_image(out, f"generated_{digit}_ex{example}.png")
+
+for idx in range(10):
+    inference(idx, num_examples=1)

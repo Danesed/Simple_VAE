@@ -23,7 +23,7 @@ INPUT_DIM = hyp_config["network"].get("input_dim")
 Z_DIM = hyp_config["network"].get("z_dim")
 H_DIM = hyp_config["network"].get("h_dim")
 
-NUM_EPOCHS = [hyp_config["training"].get("num_epochs")]
+NUM_EPOCHS = hyp_config["training"].get("num_epochs")
 LR_RATE = hyp_config["training"].get("lr")
 
 

@@ -4,7 +4,6 @@ network:
   channels_img: 3  #1 for mnist, 3 for rgb
   z_dim: 20 # Compression level
   h_dim: 200 # Computational overhead
-  in_channels: 256 #512 in the original paper. smaller values for less computational overload
 
 
 dataset:
@@ -12,13 +11,8 @@ dataset:
   dataset: "MNIST"
 
 training:
-    lr: 3e-4 #2e-4 #1e-5 # Karpathy constant
+    lr: 3e-4  # Karpathy constant
     num_epochs: 10
-    batch_sizes: [16, 16, 16, 16, 16, 16, 16, 8, 4] #[32, 32, 32, 16, 16, 16, 16, 8, 4] depends on vram
-    lambda_gp: 10
-    critic_iterations: 1
+    batch_sizes: 32
     optimizer: Adam #RMSprop #Adam
-    betas: [ 0.0, 0.99 ]
-    start_train_at_img_size: 4 #128
-    progressive_epochs: 10 #30 # depends on the size of the dataset and the size of the batches
-    alpha: 1e-5
+    #betas: [ 0.0, 0.99 ]
